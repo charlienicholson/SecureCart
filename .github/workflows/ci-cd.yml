@@ -1,0 +1,51 @@
+name: CI/CD Pipeline
+
+# When the workflow runs
+on:
+  push:
+    branches:
+      - main
+      # Trigger on push to main
+  pull_request:
+    branches:
+      - main
+      # Trigger on pull targeting main
+
+jobs:
+  build-and-test:
+    # The env for job
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        # Check repository code so workflow can access
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        # Enables advanced docker
+
+      - name: Build and run containers with Docker Compose
+        run: docker-compose up -d --build
+        # Build images and start containers detached
+
+      - name: Wait for web service to be ready
+        run: |
+          echo "Waiting for web service to be ready..."
+          sleep 10
+        # Wait to ensure Flask starts pre scan TODO: Improve not just sleepy time
+
+      - name: Run OWASP ZAP scan
+        run: docker-compose run zap
+        # Run zap service scan
+
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: zap_report
+          path: ./zap_reports/zap_report.html
+        # Save ZAP report for viewing in GitHub
+
+      - name: Shutdown Docker Compose
+        run: docker-compose down
+        # Stop and remove the container
