@@ -40,7 +40,7 @@ jobs:
         # Run zap service scan
 
       - name: Upload ZAP Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: zap_report
           path: ./zap_reports/zap_report.html
