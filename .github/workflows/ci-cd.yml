@@ -26,7 +26,7 @@ jobs:
         # Enables advanced docker
 
       - name: Build and run containers with Docker Compose
-        run: docker-compose up -d --build
+        run: docker compose up -d --build
         # Build images and start containers detached
 
       - name: Wait for web service to be ready
@@ -36,7 +36,7 @@ jobs:
         # Wait to ensure Flask starts pre scan TODO: Improve not just sleepy time
 
       - name: Run OWASP ZAP scan
-        run: docker-compose run zap
+        run: docker compose run zap
         # Run zap service scan
 
       - name: Upload ZAP Report
@@ -47,5 +47,5 @@ jobs:
         # Save ZAP report for viewing in GitHub
 
       - name: Shutdown Docker Compose
-        run: docker-compose down
+        run: docker compose down
         # Stop and remove the container
