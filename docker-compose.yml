@@ -1,0 +1,32 @@
+# Ver 3.x for Swarm and modern
+version: '3.8'
+
+services:
+  # Define the Flask service
+  web:
+    build: .
+    # Build Docker image from Dockerfile
+    ports:
+      - "5000:5000"
+      # Map port 5000 of container to port 5000 of host
+    volumes:
+      - .:/app
+      # Mount current dir into the container at /app
+    environment:
+      - FLASK_ENV=development
+      # Set env var inside the container enable dev
+    command: flask run --host=0.0.0.0
+    # Command to run app, listening on all interfaces
+
+  # Define OWASP ZAP for security scan
+  zap:
+    image: owasp/zap2docker-stable
+    # Official OWASP ZAP image
+    command: zap-baseline.py -t http://web:5000 -r zap_report.html
+    # Runs baseline scan at port 5000
+    depends_on:
+      - web
+    # Ensures service start before running scan
+    volumes:
+      - ./zap_reports:/zap/wrk
+      # Stores ZAP report under ./zap_reports
