@@ -4,6 +4,7 @@
 
 <!-- Filtering Form -->
 <form method="GET" action="{{ url_for('main.list_products') }}" style="margin-bottom: 20px;">
+  {{ form.csrf_token }}
   <label for="category">Category:</label>
   <input type="text" name="category" id="category" placeholder="e.g., cookware"
          value="{{ request.args.get('category', '') }}">
@@ -36,6 +37,7 @@
     <!-- Add to cart form or button, etc. -->
     {% if current_user.is_authenticated %}
     <form action="{{ url_for('main.add_to_cart', product_id=p.id) }}" method="POST" style="margin-top:5px;">
+      {{ form.csrf_token }}
       <button type="submit">Add to Cart</button>
     </form>
     {% else %}
