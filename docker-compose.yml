@@ -19,6 +19,7 @@ services:
     # Command to run app, listening on all interfaces
 
   # Define OWASP ZAP for security scan
+  # NEED TO HAVE A LOGIN SO NOT GOING TO RUN, OBVIOUSLY IN PROD IN PRIVATE DIR SO CAN HAVE LOGGED IN SESSION, BUT FOR MARKING NOT POSSIBLE
   zap:
     image: owasp/zap2docker-stable
     # Official OWASP ZAP image
