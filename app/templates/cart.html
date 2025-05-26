@@ -13,6 +13,7 @@
   <p><strong>Total: ${{ "%.2f"|format(total) }}</strong></p>
 
   <form action="{{ url_for('main.checkout') }}" method="POST">
+    {{ form.csrf_token }}
     <button type="submit">Checkout</button>
   </form>
 {% else %}
