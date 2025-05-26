@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>All Registered Users</h2>
+{% if users %}
+<table border="1" cellpadding="5">
+  <tr>
+    <th>ID</th>
+    <th>Email</th>
+    <th>Name</th>
+    <th>Phone</th>
+    <th>Is Admin?</th>
+    <th>Created</th>
+  </tr>
+  {% for u in users %}
+  <tr>
+    <td>{{ u.id }}</td>
+    <td>{{ u.email }}</td>
+    <td>{{ u.name }}</td>
+    <td>{{ u.phone }}</td>
+    <td>{{ 'Yes' if u.is_admin else 'No' }}</td>
+    <td>{{ u.date_created }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>No users found.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Admin Dashboard</h2>
+<h3>Users ({{ users|length }})</h3>
+{% if users %}
+  <ul>
+  {% for user in users %}
+    <li>{{ user.name }} - {{ user.email }}</li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>No users found.</p>
+{% endif %}
+
+<h3>Products ({{ products|length }})</h3>
+{% if products %}
+  <ul>
+  {% for product in products %}
+    <li>{{ product.name }} - ${{ product.price }}</li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>No products found.</p>
+{% endif %}
+
+<h3>Orders ({{ orders|length }})</h3>
+{% if orders %}
+  <ul>
+  {% for order in orders %}
+    <li>Order #{{ order.id }} - Status: {{ order.status }}</li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>No orders found.</p>
+{% endif %}
+{% endblock %}

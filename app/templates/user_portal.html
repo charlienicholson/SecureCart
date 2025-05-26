@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>My Account Settings</h2>
+<p>Welcome, {{ user.email }}!</p>
+
+<table class="table table-bordered" data-user-id="{{ user.id }}">
+  <thead>
+    <tr>
+      <th>Field</th>
+      <th>Value</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Name</td>
+      <td contenteditable="true" data-field="name">{{ user.name }}</td>
+      <td rowspan="5">
+        <!-- A single Update button for all fields, spanning multiple rows -->
+        <button class="btn btn-primary update-user-profile">Update</button>
+      </td>
+    </tr>
+    <tr>
+      <td>Email</td>
+      <td contenteditable="true" data-field="email">{{ user.email }}</td>
+    </tr>
+    <tr>
+      <td>Phone</td>
+      <td contenteditable="true" data-field="phone">{{ user.phone }}</td>
+    </tr>
+    <tr>
+      <td>Address</td>
+      <td contenteditable="true" data-field="address">{{ user.address }}</td>
+    </tr>
+    <tr>
+      <td>Payment Details</td>
+      <td contenteditable="true" data-field="payment_details">{{ user.payment_details }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<script>
+  document.querySelector('.update-user-profile').addEventListener('click', function() {
+    // The table element
+    const table = document.querySelector('table[data-user-id]');
+    // Get user ID 
+    // let userId = table.getAttribute userid
+    
+    // Retrieve the updated fields from the contenteditable cells
+    const name = table.querySelector('[data-field="name"]').innerText.trim();
+    const email = table.querySelector('[data-field="email"]').innerText.trim();
+    const phone = table.querySelector('[data-field="phone"]').innerText.trim();
+    const address = table.querySelector('[data-field="address"]').innerText.trim();
+    const payment = table.querySelector('[data-field="payment_details"]').innerText.trim();
+    
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("phone", phone);
+    formData.append("address", address);
+    formData.append("payment_details", payment);
+    
+    fetch('/user-portal/update', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert("Profile updated successfully!");
+      } else {
+        alert("Error: " + data.message);
+      }
+    })
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+{% block content %}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<h2>Admin Dashboard</h2>
+<p>Welcome, {{ current_user.email }}. You have admin privileges!</p>
+
+<div class="accordion" id="adminDashboardAccordion">
+  
+  <!-- USERS TABLE SECTION -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingUsers">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsers" aria-expanded="true" aria-controls="collapseUsers">
+        Users Table
+      </button>
+    </h2>
+    <div id="collapseUsers" class="accordion-collapse collapse show" aria-labelledby="headingUsers" data-bs-parent="#adminDashboardAccordion">
+      <div class="accordion-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Admin?</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr data-id="{{ user.id }}">
+              <td>{{ user.id }}</td>
+              <!-- edit fields for name and email -->
+              <td contenteditable="true" data-field="name">{{ user.name }}</td>
+              <td contenteditable="true" data-field="email">{{ user.email }}</td>
+              <!-- select dropdown for is_admin -->
+              <td>
+                <select data-field="is_admin">
+                  <option value="0" {% if not user.is_admin %}selected{% endif %}>No</option>
+                  <option value="1" {% if user.is_admin %}selected{% endif %}>Yes</option>
+                </select>
+              </td>
+              <td>
+                <button class="btn btn-primary btn-sm update-user">Update</button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS TABLE SECTION -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingProducts">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseProducts" aria-expanded="false" aria-controls="collapseProducts">
+        Products Table
+      </button>
+    </h2>
+    <div id="collapseProducts" class="accordion-collapse collapse" aria-labelledby="headingProducts" data-bs-parent="#adminDashboardAccordion">
+      <div class="accordion-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for product in products %}
+            <tr data-id="{{ product.id }}">
+              <td>{{ product.id }}</td>
+              <td contenteditable="true" data-field="name">{{ product.name }}</td>
+              <td contenteditable="true" data-field="price">{{ product.price }}</td>
+              <td contenteditable="true" data-field="stock">{{ product.stock }}</td>
+              <td>
+                <button class="btn btn-primary btn-sm update-product">Update</button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDERS TABLE SECTION -->
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingOrders">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOrders" aria-expanded="false" aria-controls="collapseOrders">
+        Orders Table
+      </button>
+    </h2>
+    <div id="collapseOrders" class="accordion-collapse collapse" aria-labelledby="headingOrders" data-bs-parent="#adminDashboardAccordion">
+      <div class="accordion-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>User Email</th>
+              <th>Status</th>
+              <th>Placed On</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in orders %}
+            <tr data-id="{{ order.id }}">
+              <td>{{ order.id }}</td>
+              <td>{{ order.user.email }}</td>
+              <td contenteditable="true" data-field="status">{{ order.status }}</td>
+              <td>{{ order.created_at }}</td>
+              <td><button class="btn btn-primary btn-sm update-order">Update</button></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript for handling updates -->
+<script>
+  // 1. Update Users
+  document.querySelectorAll('.update-user').forEach(function(button) {
+    button.addEventListener('click', function() {
+      var row = button.closest('tr');
+      var userId = row.getAttribute('data-id');
+      var name = row.querySelector('[data-field="name"]').innerText.trim();
+      var email = row.querySelector('[data-field="email"]').innerText.trim();
+      var isAdminSelect = row.querySelector('select[data-field="is_admin"]');
+      var isAdmin = isAdminSelect.value; // "0" or "1"
+
+      var formData = new FormData();
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("is_admin", isAdmin);
+
+      fetch('/admin/users/update/' + userId, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert("User updated successfully!");
+        } else {
+          alert("Error updating user: " + data.message);
+        }
+      })
+
+    });
+  });
+
+  // 2. Update Products
+  document.querySelectorAll('.update-product').forEach(function(button) {
+    button.addEventListener('click', function() {
+      var row = button.closest('tr');
+      var productId = row.getAttribute('data-id');
+      var name = row.querySelector('[data-field="name"]').innerText.trim();
+      var price = row.querySelector('[data-field="price"]').innerText.trim();
+      var stock = row.querySelector('[data-field="stock"]').innerText.trim();
+
+      var formData = new FormData();
+      formData.append("name", name);
+      formData.append("price", price);
+      formData.append("stock", stock);
+
+      fetch('/admin/products/update/' + productId, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert("Product updated successfully!");
+        } else {
+          alert("Error: " + data.message);
+        }
+      })
+
+    });
+  });
+
+  // 3. Update Orders
+  document.querySelectorAll('.update-order').forEach(function(button) {
+    button.addEventListener('click', function() {
+      var row = button.closest('tr');
+      var orderId = row.getAttribute('data-id');
+      var status = row.querySelector('[data-field="status"]').innerText.trim();
+
+      var formData = new FormData();
+      formData.append("status", status);
+
+      fetch('/admin/orders/update/' + orderId, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert("Order updated successfully!");
+        } else {
+          alert("Error updating order: " + data.message);
+        }
+      })
+
+    });
+  });
+</script>
+{% endblock %}

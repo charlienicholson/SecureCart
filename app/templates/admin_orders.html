@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>All Orders</h2>
+{% if orders %}
+<table border="1" cellpadding="5">
+  <tr>
+    <th>Order ID</th>
+    <th>User ID</th>
+    <th>Status</th>
+    <th>Placed On</th>
+    <th>Actions</th>
+  </tr>
+  {% for o in orders %}
+  <tr>
+    <td>{{ o.id }}</td>
+    <td>{{ o.user_id }} ({{ o.user.email }})</td>
+    <td>{{ o.status }}</td>
+    <td>{{ o.created_at }}</td>
+    <td>
+      <!-- A form to update status -->
+      <form action="{{ url_for('admin.update_order_status', order_id=o.id) }}" method="POST" style="display:inline;">
+        <select name="status">
+          <option value="received" {% if o.status == 'received' %}selected{% endif %}>Received</option>
+          <option value="shipped" {% if o.status == 'shipped' %}selected{% endif %}>Shipped</option>
+          <option value="delivered" {% if o.status == 'delivered' %}selected{% endif %}>Delivered</option>
+        </select>
+        <button type="submit">Update</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>No orders found.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+  <p>Welcome to the Secure Portal home page!</p>
+  {% if current_user.is_authenticated %}
+    <p>Logged in as: {{ current_user.email }}</p>
+    <p><a href="{{ url_for('auth.logout') }}">Logout</a></p>
+    {% if current_user.is_admin %}
+      <p><a href="{{ url_for('admin.admin_portal') }}">Go to Admin Dashboard</a></p>
+    {% else %}
+      <p><a href="{{ url_for('main.user_portal') }}">Go to User Portal</a></p>
+    {% endif %}
+  {% else %}
+    <p><a href="{{ url_for('auth.login') }}">Login</a></p>
+    <p><a href="{{ url_for('auth.register') }}">Register</a></p>
+  {% endif %}
+{% endblock %}

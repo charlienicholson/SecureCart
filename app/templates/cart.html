@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Your Cart</h2>
+{% if cart_items %}
+  <ul>
+  {% for item in cart_items %}
+    <li>
+      {{ item.product.name }} ({{ item.quantity }} @ ${{ "%.2f"|format(item.product.price) }})
+      - Subtotal: ${{ "%.2f"|format(item.quantity * item.product.price) }}
+    </li>
+  {% endfor %}
+  </ul>
+  <p><strong>Total: ${{ "%.2f"|format(total) }}</strong></p>
+
+  <form action="{{ url_for('main.checkout') }}" method="POST">
+    <button type="submit">Checkout</button>
+  </form>
+{% else %}
+  <p>Your cart is empty.</p>
+{% endif %}
+{% endblock %}

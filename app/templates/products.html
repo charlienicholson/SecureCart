@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>All Kitchen Products</h2>
+
+<!-- Filtering Form -->
+<form method="GET" action="{{ url_for('main.list_products') }}" style="margin-bottom: 20px;">
+  <label for="category">Category:</label>
+  <input type="text" name="category" id="category" placeholder="e.g., cookware"
+         value="{{ request.args.get('category', '') }}">
+  
+  <label for="min_price">Min Price:</label>
+  <input type="text" name="min_price" id="min_price" placeholder="e.g., 10"
+         value="{{ request.args.get('min_price', '') }}">
+  
+  <label for="max_price">Max Price:</label>
+  <input type="text" name="max_price" id="max_price" placeholder="e.g., 50"
+         value="{{ request.args.get('max_price', '') }}">
+  
+  <button type="submit">Filter</button>
+</form>
+
+
+
+{% if products %}
+<ul>
+{% for p in products %}
+  <li style="margin-bottom: 20px;">
+    <!-- Placeholder Image -->
+    <img src="https://fakeimg.pl/1280x720" alt="Product Image" style="max-width: 150px; max-height: 150px; display: block; margin-bottom: 5px;">
+
+    <strong>{{ p.name }}</strong> ({{ p.category }})<br>
+    Price: £{{ "%.2f"|format(p.price) }}<br>
+    Stock: {{ p.stock }}<br>
+    {{ p.description }}<br>
+
+    <!-- Add to cart form or button, etc. -->
+    {% if current_user.is_authenticated %}
+    <form action="{{ url_for('main.add_to_cart', product_id=p.id) }}" method="POST" style="margin-top:5px;">
+      <button type="submit">Add to Cart</button>
+    </form>
+    {% else %}
+    <small><em>(Login to add products to cart)</em></small>
+    {% endif %}
+  </li>
+{% endfor %}
+</ul>
+{% else %}
+<p>No products found.</p>
+{% endif %}
+{% endblock %}
