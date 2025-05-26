@@ -128,6 +128,9 @@
 
 <!-- JavaScript for handling updates -->
 <script>
+  // Pass the CSRF token from Flask into JS
+  const csrf_token = "{{ csrf_token() }}";
+
   // 1. Update Users
   document.querySelectorAll('.update-user').forEach(function(button) {
     button.addEventListener('click', function() {
@@ -136,13 +139,12 @@
       var name = row.querySelector('[data-field="name"]').innerText.trim();
       var email = row.querySelector('[data-field="email"]').innerText.trim();
       var isAdminSelect = row.querySelector('select[data-field="is_admin"]');
-      var isAdmin = isAdminSelect.value; // "0" or "1"
-
+      var isAdmin = isAdminSelect.value;
       var formData = new FormData();
       formData.append("name", name);
       formData.append("email", email);
       formData.append("is_admin", isAdmin);
-
+      formData.append("csrf_token", csrf_token); 
       fetch('/admin/users/update/' + userId, {
         method: 'POST',
         body: formData
@@ -155,7 +157,6 @@
           alert("Error updating user: " + data.message);
         }
       })
-
     });
   });
 
@@ -167,12 +168,11 @@
       var name = row.querySelector('[data-field="name"]').innerText.trim();
       var price = row.querySelector('[data-field="price"]').innerText.trim();
       var stock = row.querySelector('[data-field="stock"]').innerText.trim();
-
       var formData = new FormData();
       formData.append("name", name);
       formData.append("price", price);
       formData.append("stock", stock);
-
+      formData.append("csrf_token", csrf_token);  
       fetch('/admin/products/update/' + productId, {
         method: 'POST',
         body: formData
@@ -185,7 +185,6 @@
           alert("Error: " + data.message);
         }
       })
-
     });
   });
 
@@ -195,10 +194,9 @@
       var row = button.closest('tr');
       var orderId = row.getAttribute('data-id');
       var status = row.querySelector('[data-field="status"]').innerText.trim();
-
       var formData = new FormData();
       formData.append("status", status);
-
+      formData.append("csrf_token", csrf_token);  
       fetch('/admin/orders/update/' + orderId, {
         method: 'POST',
         body: formData
@@ -211,7 +209,6 @@
           alert("Error updating order: " + data.message);
         }
       })
-
     });
   });
 </script>
