@@ -5,6 +5,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from .config import Config
 from flask_wtf import CSRFProtect
+from flask_talisman import Talisman
 
 
 
@@ -20,6 +21,16 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
     bcrypt.init_app(app)
+
+
+    #CSP!
+    csp = {
+        "default-src": "'self'",
+        "img-src":     "'self' data:",
+        "style-src":   "'self' 'unsafe-inline'",
+        "script-src":  "'self' 'unsafe-inline'"
+    }
+    Talisman(app, content_security_policy=csp)
 
     # Flask-Login settings
     login_manager.login_view = "auth.login"
