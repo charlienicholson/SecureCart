@@ -29,7 +29,7 @@ def create_app():
         "img-src":     "'self' data:",
         "style-src":   "'self' 'unsafe-inline'",
         "script-src":  "'self' 'unsafe-inline'"
-        "frame-ancestors": "'none'"
+        #"frame-ancestors": "'none'"
     }
     Talisman(app, content_security_policy=csp)
 
