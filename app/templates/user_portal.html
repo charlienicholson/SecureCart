@@ -40,26 +40,21 @@
 </table>
 
 <script>
+  const csrf_token = "{{ csrf_token() }}";
   document.querySelector('.update-user-profile').addEventListener('click', function() {
-    // The table element
     const table = document.querySelector('table[data-user-id]');
-    // Get user ID 
-    // let userId = table.getAttribute userid
-    
-    // Retrieve the updated fields from the contenteditable cells
     const name = table.querySelector('[data-field="name"]').innerText.trim();
     const email = table.querySelector('[data-field="email"]').innerText.trim();
     const phone = table.querySelector('[data-field="phone"]').innerText.trim();
     const address = table.querySelector('[data-field="address"]').innerText.trim();
     const payment = table.querySelector('[data-field="payment_details"]').innerText.trim();
-    
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
     formData.append("phone", phone);
     formData.append("address", address);
     formData.append("payment_details", payment);
-    
+    formData.append("csrf_token", csrf_token);
     fetch('/user-portal/update', {
       method: 'POST',
       body: formData
@@ -71,7 +66,7 @@
       } else {
         alert("Error: " + data.message);
       }
-    })
+    });
   });
 </script>
 {% endblock %}
